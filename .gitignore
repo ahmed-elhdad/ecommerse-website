@@ -12,7 +12,6 @@ PROJECT_PLAN.md
 .env
 .env.local
 .env.*.local
-
 # Logs
 *.log
 npm-debug.log*
