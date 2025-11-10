@@ -82,6 +82,21 @@ const StaticContextProvider = ({ children }) => {
       txt: "presonal computer frefixes",
     },
   ];
+  const techCategories = [
+    {
+      img: "/public/tech.png",
+      name: "computers",
+    },
+    {
+      img: "/public/laptops.png",
+      name: "laptops",
+    },
+    {
+      img: "/public/keyBoard.png",
+      name: "accessories",
+    },
+
+  ];
   const value = {
     navBarItems,
     gamesPrefixes,
@@ -89,6 +104,7 @@ const StaticContextProvider = ({ children }) => {
     startGames,
     buyYourHouseDecor,
     computerPrefixes,
+    techCategories,
   };
 
   return (

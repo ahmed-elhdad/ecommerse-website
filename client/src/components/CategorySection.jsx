@@ -6,7 +6,6 @@ const CategorySection = ({
   items,
   discoverMoreLink,
   discoverMoreText = "Discover more",
-  linkKey = "link",
 }) => {
   if (!items || items.length === 0) {
     return null;

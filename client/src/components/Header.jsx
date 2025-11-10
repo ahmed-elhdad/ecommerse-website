@@ -14,7 +14,7 @@ const Header = () => {
           {/* Main Header */}
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo/Brand */}
-            <div className="flex items-center flex-shrink-0">
+            <div className="flex items-center shrink-0">
               <Link
                 to="/"
                 className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors"
