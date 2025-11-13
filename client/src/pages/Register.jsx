@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
+import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-
-const Login = () => {
+const Register = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [inputType, setInputType] = useState("password");
   const [loading, setLoading] = useState(false);
@@ -26,13 +26,34 @@ const Login = () => {
               E-Store
             </h1>
             <p className="text-gray-600 text-sm sm:text-base">
-              Welcome back to your store
+              Welcome to your store
             </p>
           </div>
 
           {/* Form Container */}
           <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Username Field */}
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="userNameField"
+                  className="block text-gray-700 font-medium text-sm sm:text-base"
+                >
+                  User Name
+                </label>
+                <input
+                  id="userNameField"
+                  className="w-full px-4 py-2 sm:py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value });
+                  }}
+                  type="text"
+                  name="userNameField"
+                  placeholder="Enter your name"
+                  required
+                />
+              </div>
               {/* Email Field */}
               <div className="space-y-2">
                 <label
@@ -98,12 +119,6 @@ const Login = () => {
                   />
                   <span>Remember me</span>
                 </label>
-                <a
-                  href="/verifyemail"
-                  className="text-blue-600 hover:text-blue-800 font-medium transition"
-                >
-                  Reset Password
-                </a>
               </div>
 
               {/* Login Button */}
@@ -112,7 +127,7 @@ const Login = () => {
                 disabled={loading}
                 className="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-2 sm:py-3 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 active:scale-95"
               >
-                {loading ? "Logging in..." : "Log In"}
+                {loading ? "Registering ..." : "Register"}
               </button>
             </form>
 
@@ -130,17 +145,17 @@ const Login = () => {
             <p className="text-center text-gray-700 text-sm sm:text-base">
               Don't have an account?{" "}
               <a
-                href="/auth/register"
+                href="/auth/login"
                 className="text-blue-600 hover:text-blue-800 font-semibold transition"
               >
-                Register Here
+                login Here
               </a>
             </p>
           </div>
 
           {/* Footer Text */}
           <p className="text-center text-gray-600 text-xs sm:text-sm mt-6">
-            By signing in, you agree to our{" "}
+            By signing up, you agree to our{" "}
             <a href="#" className="text-blue-600 hover:text-blue-800">
               Terms of Service
             </a>
@@ -150,5 +165,4 @@ const Login = () => {
     </>
   );
 };
-
-export default Login;
+export default Register;

@@ -1,7 +1,12 @@
 import mongoose from "mongoose";
-import Joi, { string } from "joi";
+// import Joi, { string } from "joi";
 const date = new Date();
 const userSchema = new mongoose.Schema({
+  photo: {
+    type: String,
+    required: false,
+    default: "",
+  },
   name: {
     type: String,
     required: true,
@@ -31,8 +36,8 @@ const userSchema = new mongoose.Schema({
   },
 });
 export default mongoose.model("User", userSchema);
-export const userValidation = Joi.object({
-  name: Joi.string().trim().min(2).max(100).required(),
-  email: Joi.string().trim().lowercase().email().required(),
-  password: Joi.string().min(6).max(128).required(),
-});
+// export const userValidation = Joi.object({
+//   name: Joi.string().trim().min(2).max(100).required(),
+//   email: Joi.string().trim().lowercase().email().required(),
+//   password: Joi.string().min(6).max(128).required(),
+// });

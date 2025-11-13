@@ -3,6 +3,7 @@ import Tech from "./pages/Tech";
 import Home from "./pages/Home";
 import Houses from "./pages/Houses";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 function App() {
   return (
     <>
@@ -11,7 +12,7 @@ function App() {
         <Route path="/prudocts/tech/" element={<Tech />} />
         <Route path="/prudocts/houses/" element={<Houses />} />
         <Route path="auth/login" element={<Login />} />
-        {/* <Route path="/register" element={<Auth />} /> */}
+        <Route path="auth/register" element={<Register />} />
       </Routes>
     </>
   );
