@@ -6,15 +6,15 @@ import { AuthService } from "../services/authService.js";
 dotenv.config();
 
 export const register = async (req, res) => {
-  AuthService.register(req.body);
+  await AuthService.register(req.body, res);
 };
 
 export const login = async (req, res) => {
-  AuthService.login(req.body);
+  await AuthService.login(req.body, res);
 };
 export const resetPassword = async (req, res) => {
-  AuthService.resetPassword(req.body, res);
+  await AuthService.resetPassword(req.body, res);
 };
 export const delUser = async (req, res) => {
-  AuthService.delUser(req.body, res);
+  await AuthService.delUser(req.body, res);
 };

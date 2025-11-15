@@ -1,15 +1,13 @@
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-import dotenv from "dotenv";
-import nodemailer from "nodemailer";
-dotenv.config();
 const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/;
-
-export const AuthService = async () => {
-  async function register(data) {
+import dotenv from "dotenv";
+dotenv.config();
+export class AuthService {
+  static async register(data, res) {
     try {
-      const { name, email, password } = await data;
+      const { name, email, password, role } = data;
       if (!name || !email || !password) {
         res.status(400).json({ message: "Provide name, email and password" });
         return;
@@ -24,21 +22,17 @@ export const AuthService = async () => {
         return;
       }
       const hashed = await bcrypt.hash(password, 10);
-      const user = new User({ name, email, password: hashed });
+      const user = new User({ name, email, password: hashed, role }); // Changed 'pass' to 'password'
       await user.save();
-      const token = jwt.sign(
-        { id: user._id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
-      );
-      res.status(201).json({ user, token });
+      res.status(201).json({ user });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
   }
-  async function login(data) {
+
+  static async login(data, res) {
     try {
-      const { email, password } = await data;
+      const { email, password } = data;
       if (!email || !password) {
         res.status(400).json({ message: "Email and password required" });
         return;
@@ -63,45 +57,56 @@ export const AuthService = async () => {
       res.status(500).json({ message: err.message });
     }
   }
-  async function resetPassword(data, res) {
-    const { email } = await data;
-    const isValidEmail = email.match(RegExp);
-    if (!isValidEmail) {
-      res.status(301).json({ error: "valid email" });
-      return;
-    }
-    const code = Math.floor(1000 + Math.random() * 9000);
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "E-commerce website",
-      html: `<p className={"font-bold text-gray-300"}>this code don't share with anybody</p><h3 className={"text-2xl text-gray-800"}>${code}</h3><span>if you not order it email ignore this email`,
-    };
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Error: ", error);
-      } else {
-        console.log("sended Successfully:", info.response);
+  static async resetPassword(data, res) {
+    try {
+      const { email } = data; // Removed 'await'
+      if (!emailRegex.test(email)) {
+        // Fixed regex validation
+        res.status(400).json({ error: "Invalid email" });
+        return;
       }
-    });
-  }
-  async function delUser(data, res) {
-    const { id } = await data;
-    const exit = User.findOne({ _id: id });
-    if (!exit) {
-      res.status(404).json({ error: "not found user" });
-      return;
+      const code = Math.floor(1000 + Math.random() * 9000);
+
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "E-commerce website",
+        html: `<p>This code don't share with anybody</p><h3>${code}</h3><span>If you didn't request this, ignore this email</span>`,
+      };
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error("Error: ", error);
+          res.status(500).json({ error: "Failed to send email" });
+        } else {
+          console.log("Sent successfully:", info.response);
+          res.status(200).json({ message: "Reset code sent to email" });
+        }
+      });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
     }
-    User.findOneAndDelete({ _id: id });
-    await User.save();
-    res.status(201).json({ message: "User deleted successfully" });
   }
-};
+
+  static async delUser(data, res) {
+    try {
+      const { id } = data; // Removed 'await'
+      const exit = await User.findOne({ _id: id }); // Added 'await'
+      if (!exit) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+      await User.findOneAndDelete({ _id: id }); // Added 'await', removed .save()
+      res.status(200).json({ message: "User deleted successfully" });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+}

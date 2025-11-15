@@ -57,13 +57,13 @@ const Header = () => {
               {/* User Account - Desktop */}
               <div className="hidden md:flex items-center space-x-2">
                 <Link
-                  to="/login"
+                  to="auth/login"
                   className="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors"
                 >
                   Log in
                 </Link>
                 <Link
-                  to="/register"
+                  to="auth/register"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
                 >
                   Register
@@ -103,14 +103,14 @@ const Header = () => {
             <div className="md:hidden border-t border-gray-200 py-4">
               <div className="flex flex-col space-y-3">
                 <Link
-                  to="/login"
+                  to="/auth/login"
                   className="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Log in
                 </Link>
                 <Link
-                  to="/register"
+                  to="auth/register"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-center transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

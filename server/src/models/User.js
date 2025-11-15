@@ -20,18 +20,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  bought: [],
+  cart: [],
   createdAt: {
     type: Date,
     default: date.getDay(),
   },
   role: {
     type: String,
-    default: ["saler", "user", "admin", "both"],
+    default: "user",
   },
   cart: [],
   isVerified: {
-    required: true,
+    required: false,
     default: false,
     type: Boolean,
   },

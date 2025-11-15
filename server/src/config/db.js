@@ -1,13 +1,16 @@
-// import mongoose from "mongoose";
-// import dotenv from "dotenv";
-// dotenv.config();
-// const connectDB = () => {
-//   try {
-//     mongoose.connect(process.env.MONGO_URI).then(() => {
-//       console.log("Connected Successfully");
-//     });
-//   } catch (err) {
-//     console.log("Error connect DB: ", err);
-//   }
-// };
-// export default connectDB;
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI).then((res) => {
+      console.log("Connected to MongoDB");
+    });
+  } catch (err) {
+    console.log("Error:", err);
+    process.exit(1);
+  }
+};
+
+export default connectDB;

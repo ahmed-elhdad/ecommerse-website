@@ -1,15 +1,55 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import axios from "axios";
 const Register = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [inputType, setInputType] = useState("password");
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = (e) => {
+  const [formData, setFormData] = useState({ email: "", password: "" }),
+    [inputType, setInputType] = useState("password"),
+    [loading, setLoading] = useState(false),
+    [errors, setErrors] = useState({ email: "", password: "" }),
+    emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/,
+    [serverError, setServerError] = useState("");
+  const validate = async () => {
+    if (!formData.email.match(emailRegex) || !formData.email) {
+      setErrors({ ...errors, email: "valid email" });
+      return false;
+    }
+    if (!formData.password) {
+      setErrors({ ...errors, password: "No found password" });
+      return false;
+    }
+    return true;
+  };
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your login logic here
-    console.log("Login attempt:", formData);
+    setServerError("");
+    const isValid = validate();
+    if (!isValid) return;
+
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URI}api/v1/auth/register`,
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
+
+      if (response.status >= 200 && response.status < 300) {
+        const { token, user } = response.data || {};
+        if (token) localStorage.setItem("token", token);
+        if (user) localStorage.setItem("user", JSON.stringify(user));
+        console.log("Register successful:", user || response.data);
+      } else {
+        setServerError(response.data?.message || "Register failed");
+      }
+    } catch (err) {
+      setServerError(
+        err.response?.data?.message || err.message || "Network error"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -73,6 +113,11 @@ const Register = () => {
                   placeholder="Enter your email"
                   required
                 />
+                {errors.email && (
+                  <span className="px-1 font-meduim capitalize text-red-600">
+                    {errors.email}
+                  </span>
+                )}
               </div>
 
               {/* Password Field */}
@@ -86,7 +131,7 @@ const Register = () => {
                 <div className="relative">
                   <input
                     id="passwordField"
-                    className="w-full px-4 py-2 sm:py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition pr-12"
+                    className="w-full px-4 py-2 sm:py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                     onChange={(e) => {
                       setFormData({ ...formData, password: e.target.value });
                     }}
@@ -108,6 +153,11 @@ const Register = () => {
                     )}
                   </button>
                 </div>
+                {errors.password && (
+                  <span className="py-1 font-meduim capitalize text-red-600">
+                    {errors.password}
+                  </span>
+                )}
               </div>
 
               {/* Remember Me & Reset Password */}
@@ -119,15 +169,21 @@ const Register = () => {
                   />
                   <span>Remember me</span>
                 </label>
+                <a
+                  href="/verifyemail"
+                  className="text-blue-600 hover:text-blue-800 font-medium transition"
+                >
+                  Reset Password
+                </a>
               </div>
 
-              {/* Login Button */}
+              {/* Register Button */}
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-2 sm:py-3 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 active:scale-95"
               >
-                {loading ? "Registering ..." : "Register"}
+                {loading ? "Logging in..." : "Log In"}
               </button>
             </form>
 
@@ -145,17 +201,17 @@ const Register = () => {
             <p className="text-center text-gray-700 text-sm sm:text-base">
               Don't have an account?{" "}
               <a
-                href="/auth/login"
+                href="/auth/register"
                 className="text-blue-600 hover:text-blue-800 font-semibold transition"
               >
-                login Here
+                Register Here
               </a>
             </p>
           </div>
 
           {/* Footer Text */}
           <p className="text-center text-gray-600 text-xs sm:text-sm mt-6">
-            By signing up, you agree to our{" "}
+            By signing in, you agree to our{" "}
             <a href="#" className="text-blue-600 hover:text-blue-800">
               Terms of Service
             </a>
@@ -165,4 +221,5 @@ const Register = () => {
     </>
   );
 };
+
 export default Register;

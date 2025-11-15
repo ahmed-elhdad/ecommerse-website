@@ -1,15 +1,68 @@
+// ...existing code...
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import axios from "axios";
 
 const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [inputType, setInputType] = useState("password");
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({ email: "", password: "" }),
+    [inputType, setInputType] = useState("password"),
+    [loading, setLoading] = useState(false),
+    [errors, setErrors] = useState({ email: "", password: "" }),
+    emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/,
+    [serverError, setServerError] = useState("");
 
-  const handleSubmit = (e) => {
+  const validate = () => {
+    if (!formData.email || !formData.email.match(emailRegex)) {
+      setErrors((prev) => ({ ...prev, email: "Enter a valid email" }));
+      return false;
+    }
+    if (!formData.password) {
+      setErrors((prev) => ({ ...prev, password: "Password is required" }));
+      return false;
+    }
+    // clear errors if valid
+    setErrors({ email: "", password: "" });
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your login logic here
-    console.log("Login attempt:", formData);
+    setServerError("");
+    const isValid = validate();
+    if (!isValid) return;
+
+    setLoading(true);
+    try {
+      let headersList = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+
+      let bodyContent = JSON.stringify({
+        password: "dsfdsf",
+        email: "fdsdf@mail.com",
+      });
+
+      let res = await fetch("http://localhost:3000/api/v1/auth/login", {
+        method: "POST",
+        body: bodyContent,
+        headers: headersList,
+      });
+      console.log(res.message || res.error);
+
+      if (res.status >= 200 && res.status < 300) {
+        const { token, user } = res.data || {};
+        if (token) localStorage.setItem("token", token);
+        if (user) localStorage.setItem("user", JSON.stringify(user));
+        console.log("Login successful:", user || res.data);
+      } else {
+        setServerError(res.data?.message || "Login failed");
+      }
+    } catch (err) {
+      setServerError(err.res?.data?.message || err.message || "Network error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -33,6 +86,11 @@ const Login = () => {
           {/* Form Container */}
           <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Server error */}
+              {serverError && (
+                <div className="text-red-600 text-sm pb-2">{serverError}</div>
+              )}
+
               {/* Email Field */}
               <div className="space-y-2">
                 <label
@@ -52,6 +110,11 @@ const Login = () => {
                   placeholder="Enter your email"
                   required
                 />
+                {errors.email && (
+                  <span className="px-1 font-medium capitalize text-red-600">
+                    {errors.email}
+                  </span>
+                )}
               </div>
 
               {/* Password Field */}
@@ -65,7 +128,7 @@ const Login = () => {
                 <div className="relative">
                   <input
                     id="passwordField"
-                    className="w-full px-4 py-2 sm:py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition pr-12"
+                    className="w-full px-4 py-2 sm:py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                     onChange={(e) => {
                       setFormData({ ...formData, password: e.target.value });
                     }}
@@ -87,6 +150,11 @@ const Login = () => {
                     )}
                   </button>
                 </div>
+                {errors.password && (
+                  <span className="py-1 font-medium capitalize text-red-600">
+                    {errors.password}
+                  </span>
+                )}
               </div>
 
               {/* Remember Me & Reset Password */}
@@ -105,7 +173,7 @@ const Login = () => {
                   Reset Password
                 </a>
               </div>
-
+              <div>{serverError}</div>
               {/* Login Button */}
               <button
                 type="submit"

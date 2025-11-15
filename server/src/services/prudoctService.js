@@ -1,8 +1,8 @@
 import mongoose, { mongo } from "mongoose";
 import Prudoct from "../models/Prudoct.js";
 import User from "../models/User.js";
-export const PrudoctService = async () => {
-  async function getPrudoct(data, res) {
+export class PrudoctService {
+  static async getPrudoct(data, res) {
     const { id } = await data;
     const isValidId = mongoose.Types.ObjectId.isValid(id);
     if (!isValidId) {
@@ -16,7 +16,7 @@ export const PrudoctService = async () => {
     }
     res.status(201).json({ data: exit });
   }
-  async function getPrudocts(data, res) {
+  static async getPrudocts(data, res) {
     const { category } = await data;
     if (!category) {
       res.json({ message: "valid category" });
@@ -25,7 +25,7 @@ export const PrudoctService = async () => {
     const prudocts = Prudoct.find({ category: category });
     res.status(201).json({ data: prudocts });
   }
-  async function createPrudoct(data, res) {
+  static async createPrudoct(data, res) {
     try {
       const {
         title,
@@ -87,7 +87,7 @@ export const PrudoctService = async () => {
       console.log(err);
     }
   }
-  async function editPrudoct(data, res) {
+  static async editPrudoct(data, res) {
     try {
       const {
         id,
@@ -145,7 +145,7 @@ export const PrudoctService = async () => {
       return res.status(500).json({ error: "Server error" });
     }
   }
-  async function removePrudoct(data, res) {
+  static async removePrudoct(data, res) {
     const { id } = await data;
     const isValidId = mongoose.Types.ObjectId.isValid(id);
     if (!isValidId) {
@@ -159,4 +159,4 @@ export const PrudoctService = async () => {
     }
     res.status(201).json({ message: "deleted successfully" });
   }
-};
+}
