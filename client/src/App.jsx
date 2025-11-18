@@ -4,7 +4,12 @@ import Home from "./pages/Home";
 import Houses from "./pages/Houses";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ConfirmEmail from "./pages/ConfirmEmail";
 function App() {
+  const user = {
+    photo: "/client/public/clothing.png",
+    name: "afdsasfsdf",
+  };
   return (
     <>
       <Routes>
@@ -13,6 +18,7 @@ function App() {
         <Route path="/prudocts/houses/" element={<Houses />} />
         <Route path="auth/login" element={<Login />} />
         <Route path="auth/register" element={<Register />} />
+        <Route path="auth/confirm" user={user} element={<ConfirmEmail />} />
       </Routes>
     </>
   );

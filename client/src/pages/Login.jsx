@@ -1,9 +1,10 @@
-// ...existing code...
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import axios from "axios";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:3000";
   const [formData, setFormData] = useState({ email: "", password: "" }),
     [inputType, setInputType] = useState("password"),
     [loading, setLoading] = useState(false),
@@ -33,33 +34,46 @@ const Login = () => {
 
     setLoading(true);
     try {
-      let headersList = {
-        Accept: "*/*",
-        "Content-Type": "application/json",
-      };
-
-      let bodyContent = JSON.stringify({
-        password: "dsfdsf",
-        email: "fdsdf@mail.com",
-      });
-
-      let res = await fetch("http://localhost:3000/api/v1/auth/login", {
+      const response = await fetch(`${BASE_URL}/api/v1/auth/login`, {
         method: "POST",
-        body: bodyContent,
-        headers: headersList,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
       });
-      console.log(res.message || res.error);
 
-      if (res.status >= 200 && res.status < 300) {
-        const { token, user } = res.data || {};
-        if (token) localStorage.setItem("token", token);
-        if (user) localStorage.setItem("user", JSON.stringify(user));
-        console.log("Login successful:", user || res.data);
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        setServerError("Feild to login");
+        console.error("Non-JSON response:", text);
+        return;
+      }
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const { token, user } = data || {};
+        if (token) {
+          localStorage.setItem("token", token);
+        }
+        if (user) {
+          localStorage.setItem("user", JSON.stringify(user));
+        }
+        console.log("Login successful:", user || data);
+        // Navigate to home page after successful login
+        navigate("/");
       } else {
-        setServerError(res.data?.message || "Login failed");
+        setServerError(
+          data?.message || "Login failed. Please check your credentials."
+        );
       }
     } catch (err) {
-      setServerError(err.res?.data?.message || err.message || "Network error");
+      setServerError(err.message || "Network error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -173,7 +187,6 @@ const Login = () => {
                   Reset Password
                 </a>
               </div>
-              <div>{serverError}</div>
               {/* Login Button */}
               <button
                 type="submit"

@@ -1,23 +1,39 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import axios from "axios";
+
 const Register = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" }),
+  const navigate = useNavigate();
+  const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:3000";
+  const [formData, setFormData] = useState({
+      name: "",
+      email: "",
+      password: "",
+    }),
     [inputType, setInputType] = useState("password"),
     [loading, setLoading] = useState(false),
-    [errors, setErrors] = useState({ email: "", password: "" }),
+    [errors, setErrors] = useState({ name: "", email: "", password: "" }),
     emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/,
     [serverError, setServerError] = useState("");
-  const validate = async () => {
-    if (!formData.email.match(emailRegex) || !formData.email) {
-      setErrors({ ...errors, email: "valid email" });
-      return false;
+  const validate = () => {
+    const newErrors = { name: "", email: "", password: "" };
+    let isValid = true;
+
+    if (!formData.name || formData.name.trim() === "") {
+      newErrors.name = "Name is required";
+      isValid = false;
     }
-    if (!formData.password) {
-      setErrors({ ...errors, password: "No found password" });
-      return false;
+    if (!formData.email || !formData.email.match(emailRegex)) {
+      newErrors.email = "Enter a valid email";
+      isValid = false;
     }
-    return true;
+    if (!formData.password || formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,26 +43,49 @@ const Register = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URI}api/v1/auth/register`,
-        {
+      const response = await fetch(`${BASE_URL}/api/v1/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
           email: formData.email,
           password: formData.password,
-        }
-      );
+        }),
+      });
 
-      if (response.status >= 200 && response.status < 300) {
-        const { token, user } = response.data || {};
-        if (token) localStorage.setItem("token", token);
-        if (user) localStorage.setItem("user", JSON.stringify(user));
-        console.log("Register successful:", user || response.data);
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        setServerError(
+          "Server returned an invalid response. Please check if the API is running."
+        );
+        console.error("Non-JSON response:", text);
+        return;
+      }
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const { token, user } = data || {};
+        if (token) {
+          localStorage.setItem("token", token);
+        }
+        if (user) {
+          localStorage.setItem("user", JSON.stringify(user));
+        }
+        console.log("Register successful:", user || data);
+        // Navigate to home page after successful registration
+        navigate("/");
       } else {
-        setServerError(response.data?.message || "Register failed");
+        setServerError(
+          data?.message || "Registration failed. Please try again."
+        );
       }
     } catch (err) {
-      setServerError(
-        err.response?.data?.message || err.message || "Network error"
-      );
+      setServerError(err.message || "Network error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -86,13 +125,19 @@ const Register = () => {
                   id="userNameField"
                   className="w-full px-4 py-2 sm:py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                   onChange={(e) => {
-                    setFormData({ ...formData, email: e.target.value });
+                    setFormData({ ...formData, name: e.target.value });
                   }}
                   type="text"
                   name="userNameField"
                   placeholder="Enter your name"
+                  value={formData.name}
                   required
                 />
+                {errors.name && (
+                  <span className="px-1 font-medium capitalize text-red-600">
+                    {errors.name}
+                  </span>
+                )}
               </div>
               {/* Email Field */}
               <div className="space-y-2">
@@ -111,6 +156,7 @@ const Register = () => {
                   type="email"
                   name="emailField"
                   placeholder="Enter your email"
+                  value={formData.email}
                   required
                 />
                 {errors.email && (
@@ -138,6 +184,7 @@ const Register = () => {
                     type={inputType}
                     name="passwordField"
                     placeholder="Enter your password"
+                    value={formData.password}
                     required
                   />
                   <button
@@ -177,13 +224,18 @@ const Register = () => {
                 </a>
               </div>
 
+              {/* Server error */}
+              {serverError && (
+                <div className="text-red-600 text-sm pb-2">{serverError}</div>
+              )}
+
               {/* Register Button */}
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-2 sm:py-3 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 active:scale-95"
               >
-                {loading ? "Logging in..." : "Log In"}
+                {loading ? "Registering..." : "Register"}
               </button>
             </form>
 
@@ -197,14 +249,14 @@ const Register = () => {
               </div>
             </div>
 
-            {/* Register Link */}
+            {/* Login Link */}
             <p className="text-center text-gray-700 text-sm sm:text-base">
-              Don't have an account?{" "}
+              Already have an account?{" "}
               <a
-                href="/auth/register"
+                href="/auth/login"
                 className="text-blue-600 hover:text-blue-800 font-semibold transition"
               >
-                Register Here
+                Login Here
               </a>
             </p>
           </div>

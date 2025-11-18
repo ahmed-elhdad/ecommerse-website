@@ -7,7 +7,7 @@ const prudoctSchema = new mongoose.Schema({
   images: { type: Array, required: true },
   price: { type: Number, required: true },
   saler: { type: String, required: true },
-  prudoctsNum: { type: Number, required: true },
+  quantity: { type: Number, required: true },
   prudoctNo: { type: Number, required: false },
 });
 export default mongoose.model("Prudoct", prudoctSchema);

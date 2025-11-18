@@ -73,7 +73,7 @@ const Header = () => {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden p-2 text-gray-700 hover:text-blue-600 transition-colors"
+                className="cursor-pointer md:hidden p-2 text-gray-700 hover:text-blue-600 transition-colors"
                 aria-label="Menu"
               >
                 <FaBars size="1.3rem" />
@@ -91,8 +91,8 @@ const Header = () => {
                 onChange={(e) => setSearch(e.target.value)}
                 type="text"
               />
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <button className="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+              <FaSearch className="cursor-pointer absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <button className="cursor-pointer absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
                 <FaSearch size="0.9rem" />
               </button>
             </div>

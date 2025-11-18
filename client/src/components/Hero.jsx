@@ -67,14 +67,14 @@ const Hero = () => {
           <button
             onClick={goToPrevious}
             aria-label="Previous"
-            className="bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all z-10"
+            className="cursor-pointer bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all z-10"
           >
             <FaArrowCircleLeft />
           </button>
           <button
             onClick={goToNext}
             aria-label="Next"
-            className="bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all z-10"
+            className="cursor-pointer bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all z-10"
           >
             <FaArrowCircleRight />
           </button>
@@ -86,7 +86,7 @@ const Hero = () => {
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`w-3 h-3 rounded-full transition-all ${
+              className={`w-3 h-3 rounded-full transition-all cursor-pointer ${
                 index === currentIndex
                   ? "bg-white w-8"
                   : "bg-white/50 hover:bg-white/75"

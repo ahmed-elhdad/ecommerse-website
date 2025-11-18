@@ -1,10 +1,11 @@
 import mongoose, { mongo } from "mongoose";
 import Prudoct from "../models/Prudoct.js";
 import User from "../models/User.js";
+import { idValidation } from "../middleware/idValidation.js";
 export class PrudoctService {
   static async getPrudoct(data, res) {
     const { id } = await data;
-    const isValidId = mongoose.Types.ObjectId.isValid(id);
+    const isValidId = idValidation(id);
     if (!isValidId) {
       res.status(301).json({ error: "Valid Id" });
       return;
@@ -104,7 +105,7 @@ export class PrudoctService {
       if (!id) {
         return res.status(400).json({ error: "id required" });
       }
-      if (!mongoose.Types.ObjectId.isValid(id)) {
+      if (!idValidation(id)) {
         return res.status(400).json({ error: "valid id" });
       }
 
@@ -147,7 +148,7 @@ export class PrudoctService {
   }
   static async removePrudoct(data, res) {
     const { id } = await data;
-    const isValidId = mongoose.Types.ObjectId.isValid(id);
+    const isValidId = idValidation(id);
     if (!isValidId) {
       res.status(301).json({ error: "valid id" });
       return;
