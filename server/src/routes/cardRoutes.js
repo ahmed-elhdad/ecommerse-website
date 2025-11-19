@@ -6,11 +6,11 @@ import {
   getCart,
   removeCart,
   removePrudoct,
-} from "../controllers/cartController.js";
+} from "../controllers/cart.controllers.js";
 const router = express.Router();
 router.get("/getCart", getCart);
 router.post("/createCart", createCart);
-router.get("/addPrudoct", addPrudoct);
-router.get("/editPrudoct", editPrudoct);
-router.get("/removePrudoct", removePrudoct);
+router.post("/addPrudoct", addPrudoct);
+router.put("/editPrudoct", editPrudoct);
+router.delete("/removePrudoct", removePrudoct);
 export default router;

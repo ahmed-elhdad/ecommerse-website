@@ -1,10 +1,9 @@
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-import User from "../models/User.js";
 import dotenv from "dotenv";
 import { AuthService } from "../services/authService.js";
 dotenv.config();
-
+export const me = async (req, res) => {
+  await AuthService.me(req.body, res);
+};
 export const register = async (req, res) => {
   await AuthService.register(req.body, res);
 };

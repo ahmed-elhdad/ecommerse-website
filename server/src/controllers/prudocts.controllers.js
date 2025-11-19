@@ -1,6 +1,6 @@
 import { PrudoctService } from "../services/prudoctService.js";
 export const getPrudoct = async (req, res) => {
-  PrudoctService.getPrudoct(req.body, res);
+  PrudoctService.getPrudoct(req.header, res);
 };
 export const getPrudocts = async (req, res) => {
   PrudoctService.getPrudocts(req.body, res);

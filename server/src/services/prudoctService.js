@@ -1,6 +1,5 @@
-import mongoose, { mongo } from "mongoose";
-import Prudoct from "../models/Prudoct.js";
-import User from "../models/User.js";
+import Prudoct from "../models/Prudoct.model.js";
+import User from "../models/User.model.js";
 import { idValidation } from "../middleware/idValidation.js";
 export class PrudoctService {
   static async getPrudoct(data, res) {

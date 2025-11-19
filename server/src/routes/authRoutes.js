@@ -5,10 +5,12 @@ import {
   login,
   register,
   resetPassword,
-} from "../controllers/authControllers.js";
+  me,
+} from "../controllers/auth.controllers.js";
+router.get("/me", me);
 router.post("/register", register);
 router.post("/login", login);
 router.post("/resetPassword", resetPassword);
-router.post("/delUser", delUser);
+router.delete("/delUser", delUser);
 
 export default router;

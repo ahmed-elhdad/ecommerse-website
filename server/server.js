@@ -13,11 +13,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 import cors from "cors";
 import connectDB from "./src/config/db.js";
+import WishListRoutes from "./src/routes/wishListRoutes.js";
 connectDB();
 // Integrate routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/prudocts", prudoctsRoutes);
 app.use("/api/v1/carts", cartRoutes);
+app.use("/api/v1/wishList", WishListRoutes);
 app.get("/", (req, res) => {
   res.send("welcome from backend");
 });

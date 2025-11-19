@@ -1,7 +1,7 @@
-import User from "../models/User.js";
-import Cart from "../models/Cart.js";
+import User from "../models/User.model.js";
+import Cart from "../models/Cart.model.js";
 import { idValidation } from "../middleware/idValidation.js";
-import Prudoct from "../models/Prudoct.js";
+import Prudoct from "../models/Prudoct.model.js";
 
 export class CartService {
   static async getCart(data, res) {

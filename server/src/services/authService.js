@@ -1,10 +1,27 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+import User from "../models/User.model.js";
+import verifyToken from "../middleware/verifyToken.js";
 const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/;
 import dotenv from "dotenv";
+import { idValidation } from "../middleware/idValidation.js";
 dotenv.config();
 export class AuthService {
+  static async me(data, res) {
+    const { userId, token } = data;
+    const isValidUserId = idValidation(userId);
+    const isValidToken = verifyToken(data);
+    if (!isValidUserId || !isValidToken) {
+      res.status(301).json({ error: "Valid user id or token" });
+      return;
+    }
+    const existingUser = User.findOne({ _id: userId });
+    if (!existingUser) {
+      res.status(404).json({ error: "not found user" });
+      return;
+    }
+    res.status(201).json({ data: existingUser });
+  }
   static async register(data, res) {
     try {
       const { name, email, password, role } = data;
