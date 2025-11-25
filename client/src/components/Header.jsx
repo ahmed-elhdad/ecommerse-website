@@ -3,12 +3,13 @@ import { Link } from "react-router-dom";
 import { IconContext } from "react-icons";
 import { FaBars, FaCartPlus, FaSearch } from "react-icons/fa";
 import { AppContext } from "../contexts/AppContext";
+import Cart from "./Cart";
 
 const Header = () => {
   const { user } = use(AppContext);
   const [search, setSearch] = useState("");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false),
+    [showCart, setShowCart] = useState(false);
   return (
     <>
       <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
@@ -45,16 +46,22 @@ const Header = () => {
             {/* Right Side Actions */}
             <div className="flex items-center space-x-4">
               {/* Cart */}
-              <Link
-                to="/cart"
-                className="relative p-2 text-gray-700 hover:text-blue-600 transition-colors"
+              <button
+                onClick={() => {
+                  if (showCart == true) {
+                    setShowCart(false);
+                  } else {
+                    setShowCart(true);
+                  }
+                }}
+                className="cursor-pointer relative p-2 text-gray-700 hover:text-blue-600 transition-colors"
                 aria-label="Shopping Cart"
               >
                 <FaCartPlus size="1.3rem" />
                 <span className="absolute top-0 right-0 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {0}
                 </span>
-              </Link>
+              </button>
 
               {/* User Account - Desktop */}
               {user !== "" ? (
@@ -130,6 +137,7 @@ const Header = () => {
             </div>
           )}
         </div>
+        {showCart && <Cart />}
       </header>
     </>
   );

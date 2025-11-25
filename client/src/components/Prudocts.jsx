@@ -1,7 +1,8 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { TechPrudoctsContext } from "../contexts/TechPrudoctsContext";
 import Laoding from "./Laoding";
 import PrudoctCard from "./PrudoctCard";
+import axios from "axios";
 const Prudocts = ({
   items,
   title = "Products",
@@ -13,8 +14,22 @@ const Prudocts = ({
   gridClassName = "grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
   showActions = true,
 }) => {
+  const [error, setError] = useState(""),
+    [showCounter, setShowCounter] = useState(false);
   const handleAddToCart = () => {
-    // Plane
+    setShowCounter(true);
+    const BASE_URL = import.meta.VITE_BASE_URL;
+    const res = axios.post(`${BASE_URL}/cart/add`);
+    if (!res || res.status >= 300) {
+      setError("try again");
+      setShowCounter(false);
+      return;
+    }
+    return (
+      <>
+        <h3>added successfully</h3>
+      </>
+    );
   };
   const context = useContext(TechPrudoctsContext);
   const contextPrudocts = context?.prudocts;
@@ -76,7 +91,9 @@ const Prudocts = ({
           <PrudoctCard
             key={prudoct?.id ?? `${prudoct?.name}-${index}`}
             prudoct={prudoct}
+            showCounter={showCounter}
             showActions={showActions}
+            setShowCounter={setShowCounter}
             onAddToCart={handleAddToCart}
           />
         ))}

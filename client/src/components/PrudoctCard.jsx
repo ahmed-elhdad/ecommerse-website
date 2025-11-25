@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaCartPlus, FaHeart } from "react-icons/fa";
 
 const fallbackImage = "/tech.png";
@@ -7,18 +7,12 @@ const PrudoctCard = ({
   prudoct = {},
   showActions = true,
   onAddToCart,
+  showCounter,
+  setShowCounter,
   onToggleFavorite,
 }) => {
-  const {
-    id,
-    name = "",
-    description,
-    price,
-    img,
-    badge,
-    isFavorite,
-  } = prudoct;
-
+  const { id, name = "", description, price, img, badge, isFavorite } = prudoct,
+    [counter, setCounter] = useState(0);
   return (
     <article
       key={id}
@@ -60,12 +54,40 @@ const PrudoctCard = ({
 
         {showActions && (
           <div className="flex gap-2">
-            <button
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
-              onClick={() => onAddToCart?.(prudoct)}
-            >
-              Add <FaCartPlus />
-            </button>
+            {showCounter ? (
+              <button className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-700 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-800">
+                <span
+                  onClick={() => {
+                    setCounter(counter + 1);
+                  }}
+                >
+                  +
+                </span>
+                <p>{counter}</p>
+                <span
+                  onClick={() => {
+                    if (counter == 1) {
+                      setShowCounter(false);
+                      setCounter(0);
+                      return;
+                    }
+                    setCounter(counter - 1);
+                  }}
+                >
+                  -
+                </span>
+              </button>
+            ) : (
+              <button
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+                onClick={() => {
+                  onAddToCart?.(prudoct);
+                  setCounter(counter + 1);
+                }}
+              >
+                Add <FaCartPlus />
+              </button>
+            )}
             <button
               className={`flex items-center justify-center rounded-lg border px-3 py-2 text-sm transition-colors ${
                 isFavorite
